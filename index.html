@@ -1,0 +1,239 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sadhu Bhavitha | Frontend Developer</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <!-- AOS Library for Animations -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Audio Elements for Sound Effects -->
+  <audio id="hoverSound" src="/sounds/hover.mp3" preload="auto"></audio>
+  <audio id="clickSound" src="/sounds/click.mp3" preload="auto"></audio>
+  <audio id="successSound" src="/sounds/success.mp3" preload="auto"></audio>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="#home" class="logo">Portfolio</a>
+      <div class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-links" id="navLinks">
+        <a href="#home" class="nav-link" onclick="toggleMenu()">Home</a>
+        <a href="#about" class="nav-link" onclick="toggleMenu()">About</a>
+        <a href="#experience" class="nav-link" onclick="toggleMenu()">Experience</a>
+        <a href="#education" class="nav-link" onclick="toggleMenu()">Education</a>
+        <a href="#skills" class="nav-link" onclick="toggleMenu()">Skills</a>
+        <a href="#projects" class="nav-link" onclick="toggleMenu()">Projects</a>
+        <a href="#hobbies" class="nav-link" onclick="toggleMenu()">Hobbies</a>
+        <a href="#social" class="nav-link" onclick="toggleMenu()">Social Media</a>
+        <a href="#contact" class="nav-link" onclick="toggleMenu()">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Home Section -->
+  <section id="home">
+    <div class="home-content">
+      <div class="home-text">
+        <h1 data-aos="fade-up" data-aos-duration="1000">Hello, I’m Bhavitha</h1>
+        <p id="typewriter" class="typewriter"></p>
+        <button class="cta-button" data-aos="zoom-in" data-aos-delay="1500" onclick="scrollToSection('contact')">Get in Touch</button>
+      </div>
+      <div class="home-image">
+        <img src="images/profile.jpg" alt="Profile Picture" class="profile-img" data-aos="fade-up" data-aos-delay="500" />
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" data-aos="fade-up">
+    <h2>About Me</h2>
+    <div class="underline"></div>
+    <p>I’m a dedicated frontend developer passionate about crafting elegant, responsive web interfaces and user-friendly applications. With a strong foundation in HTML, CSS, and JavaScript, I focus on creating seamless, data-driven user experiences. I enjoy collaborating with teams to enhance digital solutions, continuously learning modern frameworks to build intuitive interfaces that elevate user satisfaction.</p>
+  </section>
+
+  <!-- Experience Section -->
+  <section id="experience" data-aos="fade-up">
+    <h2>Experience</h2>
+    <div class="underline"></div>
+    <p>Currently pursuing a B.Tech at G PullaReddy Engineering College, I’ve worked on various projects that honed my skills in frontend development. I’ve collaborated on building responsive portfolio websites and dynamic applications like a weather app, using technologies such as HTML, CSS, and JavaScript, ensuring intuitive user interfaces and seamless functionality.</p>
+  </section>
+
+  <!-- Education Section -->
+  <section id="education" data-aos="fade-up">
+    <h2>Education</h2>
+    <div class="underline"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>Institution</th>
+          <th>Grade</th>
+          <th>Year</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>10th</td>
+          <td>Raju High School</td>
+          <td>10</td>
+          <td>2016</td>
+        </tr>
+        <tr>
+          <td>Intermediate</td>
+          <td>Raju Junior College</td>
+          <td>8.8</td>
+          <td>2018</td>
+        </tr>
+        <tr>
+          <td>B.Tech</td>
+          <td>G PullaReddy Engineering College</td>
+          <td>8.56</td>
+          <td>2022</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" data-aos="fade-up">
+    <h2>Skills</h2>
+    <div class="underline"></div>
+    <div class="skills-grid">
+      <span class="skill-item">HTML5</span>
+      <span class="skill-item">CSS3</span>
+      <span class="skill-item">JavaScript</span>
+      <span class="skill-item">Responsive Design</span>
+      <span class="skill-item">Git</span>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" data-aos="fade-up">
+    <h2>Projects</h2>
+    <div class="underline"></div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <img src="https://images.unsplash.com/photo-1547658719-da2b51169166" alt="Portfolio Website">
+        <div class="project-info">
+          <h3>Portfolio Website</h3>
+          <p>A responsive portfolio showcasing my expertise in web development.</p>
+          <p><strong>Technologies:</strong> HTML, CSS, JavaScript</p>
+          
+        </div>
+      </div>
+      <div class="project-card">
+        <img src="https://images.unsplash.com/photo-1504608524841-42fe6f032b4b" alt="Weather App">
+        <div class="project-info">
+          <h3>Weather App</h3>
+          <p>A dynamic application providing real-time weather updates using the OpenWeatherMap API.</p>
+          <p><strong>Technologies:</strong> HTML, CSS, JavaScript</p>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hobbies Section -->
+  <section id="hobbies" data-aos="fade-up">
+    <h2>Hobbies</h2>
+    <div class="underline"></div>
+    <div class="hobbies-grid">
+      <div class="hobby-item">
+        <h3>Reading</h3>
+        <p>I enjoy diving into books on technology, self-improvement, and fiction to broaden my perspectives.</p>
+      </div>
+      <div class="hobby-item">
+        <h3>Cooking</h3>
+        <p>Experimenting with new recipes in the kitchen brings me joy and a sense of creativity.</p>
+      </div>
+      <div class="hobby-item">
+        <h3>Photography</h3>
+        <p>Capturing moments through photography helps me appreciate the beauty in everyday life.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Media Section -->
+  <section id="social" data-aos="fade-up">
+    <h2>Social Media</h2>
+    <div class="underline"></div>
+    <div class="social-grid">
+      <a href="https://linkedin.com/in/bhavitha" target="_blank" class="social-item">
+        <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn Icon" class="social-icon" />
+        <span>LinkedIn</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" data-aos="fade-up">
+    <h2>Contact</h2>
+    <div class="underline"></div>
+    <form id="contact-form" name="contact" method="POST" data-netlify="true" data-netlify-recaptcha="true">
+      <input type="hidden" name="form-name" value="contact" />
+      <input type="text" name="name" placeholder="Your Name" required />
+      <input type="email" name="email" placeholder="Your Email" required />
+      <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+      <div data-netlify-recaptcha="true"></div>
+      <button type="submit">Send Message</button>
+    </form>
+    <div class="social-links">
+      <a href="mailto:bhavitha@example.com">Email</a>
+      <a href="https://linkedin.com/in/bhavitha" target="_blank">LinkedIn</a>
+    </div>
+  </section>
+
+  <!-- AOS and Custom JS -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
